@@ -1,3 +1,5 @@
+import React from "react";
+
 import { createGlobalStyle } from "styled-components";
 import Router from "./Router";
 import { ReactQueryDevtools } from "react-query/devtools";

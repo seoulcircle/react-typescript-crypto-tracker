@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Link,
   Route,
@@ -7,11 +8,12 @@ import {
   useRouteMatch,
 } from "react-router-dom";
 import styled from "styled-components";
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 import Chart from "./Chart";
 import Price from "./Price";
 import { useQuery } from "react-query";
 import { fetchInfoData, fetchPriceData } from "../api";
+import { Helmet } from "react-helmet";
 
 interface CoinParams {
   coinId: string;
@@ -172,6 +174,11 @@ function Coin() {
   const loading = infoLoading || priceLoading;
   return (
     <Container>
+      <Helmet>
+        <title>
+          {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
+        </title>
+      </Helmet>
       <Header>
         <Title>
           {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
@@ -217,10 +224,10 @@ function Coin() {
           </Tabs>
 
           <Switch>
-            <Route path={`/${coinId}/chart`}>
-              <Chart />
+            <Route path={`/:coinId/chart`}>
+              <Chart coinId={coinId} />
             </Route>
-            <Route path={`/${coinId}/price`}>
+            <Route path={`/:coinId/price`}>
               <Price />
             </Route>
           </Switch>
