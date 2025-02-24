@@ -14,7 +14,7 @@ import Price from "./Price";
 import { useQuery } from "react-query";
 import { fetchInfoData, fetchPriceData } from "../api";
 import { Helmet } from "react-helmet";
-import { FaArrowLeft } from "react-icons/fa";
+// import { FaArrowLeft } from "react-icons/fa";
 
 interface CoinParams {
   coinId: string;
@@ -197,9 +197,9 @@ function Coin() {
         </title>
       </Helmet>
       <Header>
-        <Link to={`/`}>
+        {/* <Link to={`/`}>
           <FaArrowLeft />
-        </Link>
+        </Link> */}
 
         <Title>
           {state?.name ? (
