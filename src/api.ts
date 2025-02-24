@@ -1,8 +1,10 @@
-const BASE_URL = `https://api.coinpaprika.com/v1`;
+const BASE_URL = `https://api.coingecko.com/api/v3`;
 const NICO_URL = `https://ohlcv-api.nomadcoders.workers.dev`;
 
 export function fetchCoins() {
-  return fetch(`${BASE_URL}/coins`).then((response) => response.json());
+  return fetch(
+    `${BASE_URL}/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=1`
+  ).then((response) => response.json());
 }
 
 export function fetchInfoData(coinId: string) {
@@ -12,7 +14,7 @@ export function fetchInfoData(coinId: string) {
 }
 
 export function fetchPriceData(coinId: string) {
-  return fetch(`${BASE_URL}/tickers/${coinId}`).then((response) =>
+  return fetch(`${BASE_URL}/coins/${coinId}/tickers`).then((response) =>
     response.json()
   );
 }

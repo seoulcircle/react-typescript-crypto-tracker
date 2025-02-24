@@ -1,7 +1,7 @@
 import React from "react";
 
 import { useQuery } from "react-query";
-import { fetchCoinHistory } from "../api";
+import { fetchCoinHistory, fetchInfoData } from "../api";
 import ApexChart from "react-apexcharts";
 
 interface ChartProps {
@@ -22,10 +22,7 @@ interface IHistorical {
 function Chart({ coinId }: ChartProps) {
   const { isLoading, data } = useQuery<IHistorical[]>(
     ["coinChart", coinId],
-    () => fetchCoinHistory(coinId),
-    {
-      refetchInterval: 1000,
-    }
+    () => fetchInfoData(coinId)
   );
   return (
     <div>
@@ -37,7 +34,8 @@ function Chart({ coinId }: ChartProps) {
           series={[
             {
               name: "price",
-              data: data?.map((item) => Number(item.close)) ?? [],
+              // data: data?.map((item) => Number(item.close)) ?? [],
+              data: [1, 4, 5, 12, 4, 5, 7],
             },
           ]}
           options={{
@@ -59,7 +57,7 @@ function Chart({ coinId }: ChartProps) {
                 show: false,
               },
               type: "datetime",
-              categories: data?.map((item) => Number(item.time_close)) ?? [],
+              // categories: data?.map((item) => Number(item.time_close)) ?? [],
             },
             yaxis: {
               show: false,

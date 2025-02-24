@@ -14,6 +14,7 @@ import Price from "./Price";
 import { useQuery } from "react-query";
 import { fetchInfoData, fetchPriceData } from "../api";
 import { Helmet } from "react-helmet";
+import { FaArrowLeft } from "react-icons/fa";
 
 interface CoinParams {
   coinId: string;
@@ -27,12 +28,23 @@ interface InfoParam {
   id: string;
   name: string;
   symbol: string;
-  rank: number;
+  market_cap_rank: number;
   is_new: boolean;
   is_active: boolean;
   type: string;
   logo: string;
-  description: string;
+  description: {
+    ko: string;
+    en: string;
+  };
+  market_data: {
+    current_price: {
+      usd: number;
+    };
+  };
+  localization: {
+    ko: string;
+  };
   message: string;
   open_source: boolean;
   started_at: string;
@@ -43,10 +55,12 @@ interface InfoParam {
   hash_algorithm: string;
   first_data_at: string;
   last_data_at: string;
+  image: {
+    large: string;
+  };
 }
 
-interface PriceParam {
-  id: string;
+interface TickersParam {
   name: string;
   symbol: string;
   rank: number;
@@ -82,17 +96,38 @@ interface PriceParam {
 const Container = styled.div`
   padding: 20px;
   margin: 0 auto;
-  max-width: 300px;
+  max-width: 90vw;
 `;
 
 const Header = styled.header`
-  height: 5vh;
+  height: 12vh;
+  display: flex;
+  align-items: center;
 `;
 
 const Title = styled.h1`
-  color: ${(props) => props.theme.accentColor};
-  font-size: 35px;
+  color: ${(props) => props.theme.textColor};
+  font-size: 30px;
+  margin: 20px;
+`;
+const CoinTitle = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  img {
+    width: 50px;
+  }
+`;
+const NamePrice = styled.div`
+  display: flex;
+  flex-direction: column;
+  span {
+    margin-right: 5px;
+  }
+`;
+const CurrentPrice = styled.span`
   font-weight: bold;
+  margin-top: 10px;
 `;
 
 const CoinInfo = styled.div`
@@ -140,9 +175,6 @@ const Description = styled.p`
 `;
 
 function Coin() {
-  // const [loading, setLoading] = useState(true);
-  // const [info, setInfo] = useState<InfoParam>();
-  // const [price, setPrice] = useState<PriceParam>();
   const { coinId } = useParams<CoinParams>();
   const { state } = useLocation<RouteState>();
   const priceMatch = useRouteMatch("/:coinId/price");
@@ -151,26 +183,11 @@ function Coin() {
     ["info", coinId],
     () => fetchInfoData(coinId)
   );
-  const { isLoading: priceLoading, data: priceData } = useQuery<PriceParam>(
+  const { isLoading: priceLoading, data: priceData } = useQuery<TickersParam>(
     ["price", coinId],
     () => fetchPriceData(coinId)
   );
 
-  // useEffect(() => {
-  //   (async () => {
-  //     const infoData = await (
-  //       await fetch(`https://api.coinpaprika.com/v1/coins/${coinId}`)
-  //     ).json();
-  //     setInfo(infoData);
-
-  //     const priceData = await (
-  //       await fetch(`https://api.coinpaprika.com/v1/tickers/${coinId}`)
-  //     ).json();
-  //     setPrice(priceData);
-
-  //     setLoading(false);
-  //   })();
-  // }, [coinId]);
   const loading = infoLoading || priceLoading;
   return (
     <Container>
@@ -180,8 +197,29 @@ function Coin() {
         </title>
       </Helmet>
       <Header>
+        <Link to={`/`}>
+          <FaArrowLeft />
+        </Link>
+
         <Title>
-          {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
+          {state?.name ? (
+            <CoinTitle>
+              <img src={infoData?.image.large} alt={infoData?.name} />
+              <NamePrice>
+                <span>
+                  {infoData?.name} {infoData?.localization.ko}
+                </span>
+
+                <CurrentPrice>
+                  ${infoData?.market_data.current_price.usd}
+                </CurrentPrice>
+              </NamePrice>
+            </CoinTitle>
+          ) : loading ? (
+            "Loading..."
+          ) : (
+            infoData?.name
+          )}
         </Title>
       </Header>
       {loading ? (
@@ -191,18 +229,14 @@ function Coin() {
           <CoinInfo>
             <CoinInfoItem>
               <span>RANK :</span>
-              <span>{infoData?.rank}</span>
+              <span>{infoData?.market_cap_rank}</span>
             </CoinInfoItem>
             <CoinInfoItem>
               <span>SYMBOL :</span>
               <span>{infoData?.symbol}</span>
             </CoinInfoItem>
-            <CoinInfoItem>
-              <span>OPEN SOURCE :</span>
-              <span>{infoData?.open_source ? "YES" : "NO"}</span>
-            </CoinInfoItem>
           </CoinInfo>
-          <Description>{infoData?.description}</Description>
+          <Description>{infoData?.description.en}</Description>
           <CoinInfo>
             <CoinInfoItem>
               <span>TOTAL SUPPLY :</span>
