@@ -1,30 +1,20 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useSetRecoilState } from "recoil";
-import { toDoState } from "../atoms";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { categoryState, toDoState } from "../atoms";
 
 interface IForm {
   toDo: string;
 }
 
-// interface IToDo {
-//   text: string;
-//   id: number;
-//   category: "TO_DO" | "DOING" | "DONE";
-// }
-
-// const toDoState = atom<IToDo[]>({
-//   //atom의 타입이 ToDo의 배열임
-//   key: "toDo",
-//   default: [],
-// });
-
 function CreateToDo() {
   const { register, handleSubmit, setValue } = useForm<IForm>();
   const setToDos = useSetRecoilState(toDoState);
+  const category = useRecoilValue(categoryState);
+
   const onSubmit = ({ toDo }: IForm) => {
     setToDos((oldToDos) => [
-      { text: toDo, id: Date.now(), category: "TO_DO" },
+      { text: toDo, id: Date.now(), category },
       ...oldToDos,
     ]);
     setValue("toDo", "");
